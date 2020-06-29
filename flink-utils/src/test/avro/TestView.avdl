@@ -1,0 +1,11 @@
+@namespace("org.hypertrace.core.common.flinkutils.test.api")
+protocol TestViewProtocol {
+  record TestView {
+    union { null, string } name = null;
+    long creation_time_millis = -1;
+    union { null, bytes } id_sha = null;
+    array<string> friends = [];
+    map<string> properties = {};
+    long time_taken_millis = 0;
+  }
+}

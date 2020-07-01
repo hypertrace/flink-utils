@@ -8,9 +8,6 @@ executors:
   java:
     docker:
       - image: cimg/openjdk:11.0
-    environment:
-      JVM_OPTS: -Xmx2g
-      TERM: dumb
 
 commands:
   gradle:
@@ -25,7 +22,7 @@ commands:
     steps:
       - run:
           name: << parameters.args >>
-          command: ./gradlew << parameters.args >> --info --max-workers=2 --continue
+          command: ./gradlew << parameters.args >> --info --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Dorg.gradle.console=plain --continue
           when: << parameters.when >>
   setup_build_environment:
     description: 'Generates cache key from a hash of all gradle files'

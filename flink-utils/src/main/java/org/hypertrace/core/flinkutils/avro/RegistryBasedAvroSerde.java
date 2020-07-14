@@ -66,6 +66,9 @@ public class RegistryBasedAvroSerde<T extends SpecificRecord> implements
     try {
       return serializer.serialize(topicName, element);
     } catch (Exception e) {
+      LOGGER.error(
+          "Failed to serialize object of type " + (element != null ? element.getClass().getName()
+              : "[NULL]"), e);
       return new byte[0];
     }
   }

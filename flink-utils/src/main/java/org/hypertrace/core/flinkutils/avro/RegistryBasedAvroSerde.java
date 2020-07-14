@@ -63,14 +63,7 @@ public class RegistryBasedAvroSerde<T extends SpecificRecord> implements
 
   @Override
   public byte[] serialize(T element) {
-    try {
-      return serializer.serialize(topicName, element);
-    } catch (Exception e) {
-      LOGGER.error(
-          "Failed to serialize object of type " + (element != null ? element.getClass().getName()
-              : "[NULL]"), e);
-      return new byte[0];
-    }
+    return serializer.serialize(topicName, element);
   }
 
   private void readObject(ObjectInputStream inputStream)

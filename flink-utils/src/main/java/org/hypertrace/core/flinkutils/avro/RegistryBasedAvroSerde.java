@@ -61,13 +61,14 @@ public class RegistryBasedAvroSerde<T extends SpecificRecord> implements
     return TypeInformation.of(this.clazz);
   }
 
+  /**
+   * @param element to serialize
+   * @return serialized bytes
+   * @throws org.apache.kafka.common.errors.SerializationException
+   */
   @Override
   public byte[] serialize(T element) {
-    try {
-      return serializer.serialize(topicName, element);
-    } catch (Exception e) {
-      return new byte[0];
-    }
+    return serializer.serialize(topicName, element);
   }
 
   private void readObject(ObjectInputStream inputStream)

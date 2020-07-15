@@ -1,5 +1,8 @@
 package org.hypertrace.core.flinkutils.avro;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -12,14 +15,13 @@ import org.apache.avro.specific.SpecificRecord;
 import org.hypertrace.core.common.flinkutils.test.api.TestView;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RegistryBasedAvroSerdeTest {
+
+  private String topicName = "input";
 
   @Test
   public void whenReaderSchemaIsNull_thenExpectIttoBeNotPassedInDeserialize() {
-    CustomRegistryBasedAvroSerde<TestView> underTest = new CustomRegistryBasedAvroSerde<>("",
+    CustomRegistryBasedAvroSerde<TestView> underTest = new CustomRegistryBasedAvroSerde<>(topicName,
         TestView.class,
         Collections.emptyMap(), false);
     byte[] data = underTest.serialize(createTestView());
@@ -29,7 +31,7 @@ public class RegistryBasedAvroSerdeTest {
 
   @Test
   public void whenReaderSchemaExists_thenExpectIttoBePassedInDeserialize() {
-    CustomRegistryBasedAvroSerde<TestView> underTest = new CustomRegistryBasedAvroSerde<>("",
+    CustomRegistryBasedAvroSerde<TestView> underTest = new CustomRegistryBasedAvroSerde<>(topicName,
         TestView.class,
         Collections.emptyMap(), true);
     byte[] data = underTest.serialize(createTestView());
@@ -56,7 +58,7 @@ public class RegistryBasedAvroSerdeTest {
     boolean invokedWithReaderSchema;
 
     public CustomRegistryBasedAvroSerde(String topicName, Class clazz,
-                                        Map<String, String> serdeConfig, boolean shouldInitReaderSchema) {
+        Map<String, String> serdeConfig, boolean shouldInitReaderSchema) {
       super(topicName, clazz, serdeConfig);
       if (shouldInitReaderSchema) {
         this.readerSchema = TestView.getClassSchema();
@@ -65,8 +67,14 @@ public class RegistryBasedAvroSerdeTest {
 
     @Override
     protected void initTransients() {
-      this.serializer = new KafkaAvroSerializer(new MockSchemaRegistryClient());
-      this.deserializer = new KafkaAvroDeserializer(new MockSchemaRegistryClient()) {
+      MockSchemaRegistryClient client = new MockSchemaRegistryClient();
+      try {
+        client.register(topicName + "-value", TestView.getClassSchema());
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+      this.serializer = new KafkaAvroSerializer(client);
+      this.deserializer = new KafkaAvroDeserializer(client) {
         @Override
         public Object deserialize(String s, byte[] bytes) {
           return super.deserialize(s, bytes);

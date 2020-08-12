@@ -24,7 +24,7 @@ tasks.test {
 }
 
 dependencies {
-  implementation("org.hypertrace.core.serviceframework:platform-metrics:0.1.0")
+  implementation("org.hypertrace.core.serviceframework:platform-metrics:0.1.6")
 
   constraints {
     implementation("com.google.guava:guava:29.0-jre") {

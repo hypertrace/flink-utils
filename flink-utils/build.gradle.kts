@@ -24,7 +24,7 @@ tasks.test {
 }
 
 dependencies {
-  implementation("org.hypertrace.core.serviceframework:platform-metrics:0.1.6")
+  implementation("org.hypertrace.core.serviceframework:platform-metrics:0.1.7")
 
   constraints {
     implementation("com.google.guava:guava:29.0-jre") {
@@ -46,7 +46,7 @@ dependencies {
   api("org.apache.flink:flink-avro:1.7.0")
   api("org.apache.flink:flink-connector-kafka_2.11:1.7.0")
   api("org.apache.flink:flink-streaming-java_2.11:1.7.0")
-  api("io.confluent:kafka-avro-serializer:5.5.0")
+  api("io.confluent:kafka-avro-serializer:5.5.1")
 
   implementation("org.apache.flink:flink-metrics-dropwizard:1.7.0")
 
